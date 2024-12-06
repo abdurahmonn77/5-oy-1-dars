@@ -1,6 +1,11 @@
 let elCountryList = document.querySelector('.list')
 let elSelect = document.querySelector('.capital-select')
 let elSearchInput = document.querySelector('.search-input')
+let elLikedCount = document.querySelector('.likedCount')
+let elSavedCount = document.querySelector('.savedCount')
+let elLikeBtn = document.querySelector('.heart-btn')
+let elSavedBtn = document.querySelector('.saved-btn')
+
 
 function renderCountries(arr, list) {
     list.innerHTML = null
@@ -15,18 +20,55 @@ function renderCountries(arr, list) {
         <p class="mb-2 ">Capital: ${item.capital}</p>
         </div>
         <div class="flex items-center justify-between p-2">
-            <button class="w-[45px] h-[45px] border-[2px] border-black rounded-full flex items-center justify-center">
+            <button onclick="handleLikeBtnClick(${item.id})" class="${item.isLiked ? "bg-red-600" : ""} heart-btn w-[45px] h-[45px] border-[2px] border-black rounded-full flex items-center justify-center">
             <img src="./images/heart.svg" width="20" height="20">
             </button>
-            <button class="w-[45px] h-[45px] border-[2px] border-black rounded-full flex items-center justify-center">
+            <button onclick="handleSaveBtnClick(${item.id})" class="${item.isBasket ? "bg-blue-400" : ""} save-btn w-[45px] h-[45px] border-[2px] border-black rounded-full flex items-center justify-center">
             <img src="./images/saved.svg" width="20" height="20">
             </button>
         </div>
         `
         list.append(elCountryItem)
+
+        
     })
 }
+
+
 renderCountries(countrys, elCountryList)
+
+// LIKE BTN CLICK START
+function handleLikeBtnClick(id) {
+    const singleObj = countrys.find(item => item.id == id)
+    singleObj.isLiked = !singleObj.isLiked
+    renderCountries(countrys, elCountryList)
+    elLikedCount.textContent = countrys.filter(item => item.isLiked == true).length
+}
+// LIKE BTN CLICK END
+
+// SAVE BTN START
+function handleSaveBtnClick(id) {
+    const singleObj = countrys.find(item => item.id == id) 
+    singleObj.isBasket = !singleObj.isBasket
+    renderCountries(countrys, elCountryList)
+    elSavedCount.textContent = countrys.filter(item => item.isBasket == true).length
+}
+// SAVE BTN END
+
+// SHOW LIKE BTN
+elLikeBtn.addEventListener('click', function(e) {
+    const likedCountry = countrys.filter(item => item.isLiked)
+    renderCountries(likedCountry, elCountryList)
+})
+//SHOW LIKE BTN END
+
+
+// SHOW SAVED BTN
+elSavedBtn.addEventListener('click', function(e) {
+    const savedCountry = countrys.filter(item => item.isBasket)
+    renderCountries(savedCountry, elCountryList)
+})
+//SHOW SAVED BTN END
 
 //SELECT PART
 function renderSelectOption(arr, list) {
@@ -40,7 +82,7 @@ function renderSelectOption(arr, list) {
 renderSelectOption(countrys, elSelect)
 
 elSelect.addEventListener("change", function(e){
-    const result = countrys.filter(item => item.capital.toUpperCase() == e.target.value)
+    const result = countrys.filter(item => item.capital.toLowerCase() == e.target.value.toLowerCase())
     renderCountries(result, elCountryList)
 })
 // SELECT PART END
@@ -54,3 +96,4 @@ elSearchInput.addEventListener("input", function(e){
 })
 
 // SEARCH PART END
+
